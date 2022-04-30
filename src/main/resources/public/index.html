@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <title>Folio3 - Speech to Text demo using IBM Watson</title>
+        <link rel="icon" href="http://www.folio3.com/wp-content/themes/folio3/favicon.ico" type="image/png">
+
+        <meta charset="windows-1252">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="styles/main.css">
+
+    </head>
+    <body>
+        <div class="text-center mb-4 wrapper">
+            <img class="mb-4" src="http://www.folio3.com/wp-content/themes/folio3/page_templates/images/folio-logo.png" >
+            <h1 class="h3 mb-3 font-weight-normal">Watson Speech To Text Demo</h1>
+            <p>Add a file below and click on transcribe to generate the transcription.</p>
+            <div class="form-label-group">
+                <input type="file" id="audio" class="form-control" placeholder="Audio File" required="" autofocus="">
+            </div>
+            <div>&nbsp;</div>
+            <button class="btn btn-lg btn-primary btn-block" id="transcribe-btn">Transcribe!</button>
+            <div>&nbsp;</div>
+            <code id="transcript">Transcript will be displayed here!</code>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.js" crossorigin="anonymous"></script>
+        <script>
+            $('#transcribe-btn').click(function (e) {
+                e.preventDefault();
+                var file = new FileReader();
+                file.onload = function (e) {
+                    var base64Audio = this.result;
+                    var data = new FormData();
+                    data.append('audio', base64Audio.split(',')[1]);
+                    var jqxhr = $.ajax({
+                        type: "POST",
+                        url: "/speech/transcribe",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        success: function( result ) {
+                            $('#transcript').html( result );
+                        }
+                    });
+                }
+                file.readAsDataURL($('#audio')[0].files[0]);
+            });
+        </script>
+    </body>
+</html>
